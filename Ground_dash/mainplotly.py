@@ -49,10 +49,13 @@ app.layout = html.Div([
                 style={"margin-left": "4px"}
             ),
             dbc.Nav(
-                dbc.NavItem(dbc.Button("Refresh", color="primary", id="refresh-button")),
+                [
+                    dbc.NavItem(dbc.Button("Clear", color="danger", id="clear-button", style={"margin-right": "10px"})),
+                     dbc.NavItem(dbc.Button("Refresh", color="primary", id="refresh-button")),
+                ],
                 className="ml-auto",
                 navbar=True,
-                style={"margin-left": "auto", "margin-right": "27px"},
+                style={"margin-left": "auto", "margin-right": "27px"}, 
             ),
         ],
         color="dark",
@@ -64,29 +67,29 @@ app.layout = html.Div([
     html.Div(className='container-fluid', children=[
         dbc.Row([
             dbc.Col([
-                html.H6("Data 1", className="text-center", style={"font-size": "22px", "margin-top": "40px"}),
+                html.H6("Altitude (m)", className="text-center", style={"font-size": "20px", "margin-top": "40px"}),
                 dcc.Graph(id="graph1", figure=go.Figure(data=go.Scatter(x=[], y=[]))),
             ], width=4),
             dbc.Col([
-                html.H6("Data 2", className="text-center", style={"font-size": "22px", "margin-top": "40px"}),
+                html.H6("Temperature (°C)", className="text-center", style={"font-size": "20px", "margin-top": "40px"}),
                 dcc.Graph(id="graph2", figure=go.Figure(data=go.Scatter(x=[], y=[]))),
             ], width=4),
             dbc.Col([
-                html.H6("Data 3", className="text-center", style={"font-size": "22px", "margin-top": "40px"}),
+                html.H6("Humidity (g/kg)", className="text-center", style={"font-size": "20px", "margin-top": "40px"}),
                 dcc.Graph(id="graph3", figure=go.Figure(data=go.Scatter(x=[], y=[]))),
             ], width=4),
         ], className="mb-5"),
         dbc.Row([
             dbc.Col([
-                html.H6("Data 4", className="text-center mb-5", style={"font-size": "22px"}),
+                html.H6("Acceleration (m/s2)", className="text-center mb-5", style={"font-size": "20px"}),
                 dcc.Graph(id="graph4", figure=go.Figure(data=go.Scatter(x=[], y=[]))),
             ], width=4),
             dbc.Col([
-                html.H6("Data 5", className="text-center mb-5", style={"font-size": "22px"}),
+                html.H6("Pressure (Pa)", className="text-center mb-5", style={"font-size": "20px"}),
                 dcc.Graph(id="graph5", figure=go.Figure(data=go.Scatter(x=[], y=[]))),
             ], width=4),
             dbc.Col([
-                html.H6("Data 6", className="text-center mb-5", style={"font-size": "22px"}),
+                html.H6("Magnetic (μT)", className="text-center mb-5", style={"font-size": "20px"}),
                 dcc.Graph(id="graph6", figure=go.Figure(data=go.Scatter(x=[], y=[]))),
             ], width=4),
         ])
@@ -143,24 +146,56 @@ def render_page_content(pathname):
         return html.H1("")
     else:
         return html.H1("")
+    
+# Update graph
+@app.callback(
+    [Output('graph1', 'figure'),
+     Output('graph2', 'figure'),
+     Output('graph3', 'figure'),
+     Output('graph4', 'figure'),
+     Output('graph5', 'figure'),
+     Output('graph6', 'figure')],
+    [Input('graph-update', 'n_intervals'),
+     Input('clear-button', 'n_clicks')],
+    [State('graph1', 'figure'),
+     State('graph2', 'figure'),
+     State('graph3', 'figure'),
+     State('graph4', 'figure'),
+     State('graph5', 'figure'),
+     State('graph6', 'figure')]
+)
+def update_graphs(n_intervals, clear_clicks, figure1, figure2, figure3, figure4, figure5, figure6):
+    global data1, data2, data3, data4, data5, data6
 
-# Function Update Data
-@app.callback([Output('graph1', 'figure'),
-               Output('graph2', 'figure'),
-               Output('graph3', 'figure'),
-               Output('graph4', 'figure'),
-               Output('graph5', 'figure'),
-               Output('graph6', 'figure')],
-              [Input('graph-update', 'n_intervals')])
-def update_graphs(n_intervals):
+    if clear_clicks:
+        data1 = [data1[-1]] if data1 else []
+        data2 = [data2[-1]] if data2 else []
+        data3 = [data3[-1]] if data3 else []
+        data4 = [data4[-1]] if data4 else []
+        data5 = [data5[-1]] if data5 else []
+        data6 = [data6[-1]] if data6 else []
+
     fig1 = go.Figure(data=go.Scatter(x=list(range(len(data1))), y=data1))
+    fig1.update_layout(xaxis_title="Packet")
+
     fig2 = go.Figure(data=go.Scatter(x=list(range(len(data2))), y=data2))
+    fig2.update_layout(xaxis_title="Packet")
+
     fig3 = go.Figure(data=go.Scatter(x=list(range(len(data3))), y=data3))
+    fig3.update_layout(xaxis_title="Packet")
+
     fig4 = go.Figure(data=go.Scatter(x=list(range(len(data4))), y=data4))
+    fig4.update_layout(xaxis_title="Packet")
+
     fig5 = go.Figure(data=go.Scatter(x=list(range(len(data5))), y=data5))
+    fig5.update_layout(xaxis_title="Packet")
+
     fig6 = go.Figure(data=go.Scatter(x=list(range(len(data6))), y=data6))
+    fig6.update_layout(xaxis_title="Packet")
 
     return fig1, fig2, fig3, fig4, fig5, fig6
+
+    return figure1, figure2, figure3, figure4, figure5, figure6
 
 @app.callback(Output('url', 'pathname'),
               [Input('refresh-button', 'n_clicks'),
