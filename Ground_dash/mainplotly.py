@@ -15,6 +15,9 @@ from dash.dependencies import Input, Output, State
 PORT_NAME = "COM4"
 BAUDRATE = "115200"
 
+# Set line colour
+line_colour = 'blue'
+
 data1 = []
 data2 = []
 data3 = []
@@ -268,21 +271,27 @@ def update_graphs(
         data6 = [data6[-1]] if data6 else []
 
     fig1 = go.Figure(data=go.Scatter(x=list(range(len(data1))), y=data1))
+    fig1.update_traces(line=dict(color=line_colour))
     fig1.update_layout(xaxis_title="Packet")
 
     fig2 = go.Figure(data=go.Scatter(x=list(range(len(data2))), y=data2))
+    fig2.update_traces(line=dict(color=line_colour))
     fig2.update_layout(xaxis_title="Packet")
 
     fig3 = go.Figure(data=go.Scatter(x=list(range(len(data3))), y=data3))
+    fig3.update_traces(line=dict(color=line_colour))
     fig3.update_layout(xaxis_title="Packet")
 
     fig4 = go.Figure(data=go.Scatter(x=list(range(len(data4))), y=data4))
+    fig4.update_traces(line=dict(color=line_colour))
     fig4.update_layout(xaxis_title="Packet")
 
     fig5 = go.Figure(data=go.Scatter(x=list(range(len(data5))), y=data5))
+    fig5.update_traces(line=dict(color=line_colour))
     fig5.update_layout(xaxis_title="Packet")
 
     fig6 = go.Figure(data=go.Scatter(x=list(range(len(data6))), y=data6))
+    fig6.update_traces(line=dict(color=line_colour))
     fig6.update_layout(xaxis_title="Packet")
 
     return fig1, fig2, fig3, fig4, fig5, fig6
