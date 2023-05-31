@@ -16,7 +16,7 @@ PORT_NAME = "COM4"
 BAUDRATE = "115200"
 
 # Set line colour
-line_colour = 'blue'
+line_colour = "blue"
 
 data1 = []
 data2 = []
@@ -72,6 +72,14 @@ app.layout = html.Div(
                 ),
                 dbc.Nav(
                     [
+                        dbc.NavItem(
+                            dbc.Button(
+                                "Line Colour",
+                                color="warning",
+                                id="color-button",
+                                style={"margin-right": "10px", "color": "white"},
+                            )
+                        ),
                         dbc.NavItem(
                             dbc.Button(
                                 "Clear",
@@ -197,6 +205,25 @@ app.layout = html.Div(
     ]
 )
 
+# Line_colour button
+@app.callback(
+    Output("color-button", "style"),
+    Output("color-button", "children"),
+    Input("color-button", "n_clicks"),
+    State("color-button", "style"),
+)
+def toggle_line_color(n_clicks, current_style):
+    global line_colour
+    
+    if n_clicks is None:
+        return current_style, "Line Color"
+    
+    if line_colour == "blue":
+        line_colour = "red"
+        return {"margin-right": "10px", "color": "white"}, "Line Color (Red)"
+    else:
+        line_colour = "blue"
+        return {"margin-right": "10px", "color": "white"}, "Line Color (Blue)"
 
 # Function to read data from the serial port
 def read_serial_data():
