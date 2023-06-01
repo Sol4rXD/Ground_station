@@ -218,12 +218,17 @@ def toggle_line_color(n_clicks, current_style):
     if n_clicks is None:
         return current_style, "Line Color"
     
-    if line_colour == "blue":
-        line_colour = "red"
-        return {"margin-right": "10px", "color": "white"}, "Line Color (Red)"
-    else:
-        line_colour = "blue"
-        return {"margin-right": "10px", "color": "white"}, "Line Color (Blue)"
+    colors = ["blue", "black", "red", "purple", 'green']
+    color_labels = ["Blue", "Black", "Red", "Purple", "Green"]
+    
+    line_colour_index = n_clicks % len(colors)
+    line_colour = colors[line_colour_index]
+    line_colour_label = color_labels[line_colour_index]
+    
+    new_style = {"margin-right": "10px", "color": "white"}
+    
+    return new_style, f"Line Color ({line_colour_label})"
+
 
 # Function to read data from the serial port
 def read_serial_data():
