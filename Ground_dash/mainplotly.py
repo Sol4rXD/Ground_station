@@ -12,10 +12,17 @@ from dash import dcc, html
 from dash.dependencies import Input, Output, State
 
 # Set serial port
-PORT_NAME = "COM4"
+PORT_NAME = "COM15"
 BAUDRATE = "115200"
 
-# Set line colour
+# Set your data name
+DATA_1 = 'Data 1'
+DATA_2 = 'Data 2'
+DATA_3 = 'Data 3'
+DATA_4 = 'Data 4'
+DATA_5 = 'Data 5'
+DATA_6 = 'Data 6'
+
 line_colour = "blue"
 
 data1 = []
@@ -111,7 +118,7 @@ app.layout = html.Div(
                         dbc.Col(
                             [
                                 html.H6(
-                                    "Altitude (m)",
+                                    DATA_1,
                                     className="text-center",
                                     style={"font-size": "20px", "margin-top": "40px"},
                                 ),
@@ -125,7 +132,7 @@ app.layout = html.Div(
                         dbc.Col(
                             [
                                 html.H6(
-                                    "Temperature (°C)",
+                                    DATA_2,
                                     className="text-center",
                                     style={"font-size": "20px", "margin-top": "40px"},
                                 ),
@@ -139,7 +146,7 @@ app.layout = html.Div(
                         dbc.Col(
                             [
                                 html.H6(
-                                    "Humidity (g/kg)",
+                                    DATA_3,
                                     className="text-center",
                                     style={"font-size": "20px", "margin-top": "40px"},
                                 ),
@@ -158,7 +165,7 @@ app.layout = html.Div(
                         dbc.Col(
                             [
                                 html.H6(
-                                    "Acceleration (m/s2)",
+                                    DATA_4,
                                     className="text-center mb-5",
                                     style={"font-size": "20px"},
                                 ),
@@ -172,7 +179,7 @@ app.layout = html.Div(
                         dbc.Col(
                             [
                                 html.H6(
-                                    "Pressure (Pa)",
+                                    DATA_5,
                                     className="text-center mb-5",
                                     style={"font-size": "20px"},
                                 ),
@@ -186,7 +193,7 @@ app.layout = html.Div(
                         dbc.Col(
                             [
                                 html.H6(
-                                    "Magnetic (μT)",
+                                    DATA_6,
                                     className="text-center mb-5",
                                     style={"font-size": "20px"},
                                 ),
@@ -205,6 +212,7 @@ app.layout = html.Div(
     ]
 )
 
+
 # Line_colour button
 @app.callback(
     Output("color-button", "style"),
@@ -214,19 +222,19 @@ app.layout = html.Div(
 )
 def toggle_line_color(n_clicks, current_style):
     global line_colour
-    
+
     if n_clicks is None:
         return current_style, "Line Color"
-    
-    colors = ["blue", "black", "red", "purple", 'green']
+
+    colors = ["blue", "black", "red", "purple", "green"]
     color_labels = ["Blue", "Black", "Red", "Purple", "Green"]
-    
+
     line_colour_index = n_clicks % len(colors)
     line_colour = colors[line_colour_index]
     line_colour_label = color_labels[line_colour_index]
-    
+
     new_style = {"margin-right": "10px", "color": "white"}
-    
+
     return new_style, f"Line Color ({line_colour_label})"
 
 
@@ -245,6 +253,7 @@ def read_serial_data():
             writer = csv.writer(file)
             writer.writerow(data)
 
+        # Set your Data position 
         if len(data) >= 6:
             data1.append(float(data[0]))
             data2.append(float(data[1]))
@@ -256,7 +265,6 @@ def read_serial_data():
     # Close the serial port
     ser.close()
     time.sleep(1)
-
 
 # Callback function to update the page content
 @app.callback(Output("refresh-page", "children"), [Input("url", "pathname")])
