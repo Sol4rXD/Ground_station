@@ -11,14 +11,14 @@ from plotly.subplots import make_subplots
 from dash import dcc, html
 from dash.dependencies import Input, Output, State
 
-# Set serial port
-PORT_NAME = "COM15"
-BAUDRATE = "115200"
+# Set serial port 
+PORT_NAME = "COM4"
+BAUDRATE = "9600"
 
 # Set your data name
-DATA_1 = 'Data 1'
-DATA_2 = 'Data 2'
-DATA_3 = 'Data 3'
+DATA_1 = 'Temperature 1'
+DATA_2 = 'Temperature 2'
+DATA_3 = 'Altitude'
 DATA_4 = 'Data 4'
 DATA_5 = 'Data 5'
 DATA_6 = 'Data 6'
@@ -31,6 +31,9 @@ data3 = []
 data4 = []
 data5 = []
 data6 = []
+
+data_lists = [data1, data2, data3, data4, data5, data6]
+data_lengths = [1, 2, 3, 4, 5, 6]
 
 data_lock = threading.Lock()
 
@@ -58,7 +61,7 @@ app.layout = html.Div(
                     [
                         dbc.NavItem(
                             dbc.NavLink(
-                                "Home",
+                                "Github",
                                 href="#",
                                 id="home-link",
                                 style={"font-size": "18px"},
@@ -224,7 +227,7 @@ def toggle_line_color(n_clicks, current_style):
     global line_colour
 
     if n_clicks is None:
-        return current_style, "Line Color"
+        return current_style, "Line Colour"
 
     colors = ["blue", "black", "red", "purple", "green"]
     color_labels = ["Blue", "Black", "Red", "Purple", "Green"]
@@ -254,13 +257,11 @@ def read_serial_data():
             writer.writerow(data)
 
         # Set your Data position 
-        if len(data) >= 6:
-            data1.append(float(data[0]))
-            data2.append(float(data[1]))
-            data3.append(float(data[2]))
-            data4.append(float(data[3]))
-            data5.append(float(data[4]))
-            data6.append(float(data[5]))
+        if len(data) <= 6:
+            for i in range(len(data)):
+                data_lists[i].append(float(data[i]))
+        else:
+            print("Invalid data length")
 
     # Close the serial port
     ser.close()
@@ -366,7 +367,7 @@ def open_contact_link(n_clicks):
 @app.callback(Output("home-link", "href"), [Input("home-link", "n_clicks")])
 def open_home_link(n_clicks):
     if n_clicks is not None:
-        webbrowser.open_new_tab("https://plotly.com/dash/")
+        webbrowser.open_new_tab("https://github.com/Sol4rXD")
     return "/home"
 
 
